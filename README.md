@@ -1,5 +1,12 @@
 # frontend
 
+## 更新日志
+#### 2019.5.2 
+- 重构了YOLO部分的代码
+#### 2019.4.13 
+- 中期答辩版本上传
+
+
 ## Project setup
 ```
 npm install

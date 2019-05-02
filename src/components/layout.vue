@@ -1,13 +1,19 @@
 <template>
+        <YoloWebCam></YoloWebCam>
 
 </template>
-
 <script>
+    import YoloWebCam from './YoloWebCamXI'
+
     export default {
-        name: "layout"
+        name: "layouttest",
+        data() {
+            return {
+                visible: false,
+            }
+        },
+        components: {
+            YoloWebCam,                                 // eslint-disable-line
+        },
     }
 </script>
-
-<style scoped>
-
-</style>

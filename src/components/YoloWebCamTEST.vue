@@ -22,7 +22,7 @@
                 <!--
                 <video ref="myvideo" width="288" height="288" playsinline autoplay muted ></video>
                 -->
-                <canvas ref="canvas" id="canvas" width="480" height="384" style="margin: auto;"></canvas>
+                <canvas ref="canvas" id="canvas" width="360" height="360" style="margin: auto;"></canvas>
 
             </div>
             <div>
@@ -50,11 +50,16 @@
     } from './yoloConfig';              // eslint-disable-line no-unused-vars
     const MAX_BOXES = 20;           // eslint-disable-line no-unused-vars
     const INPUT_SIZE = 288;         // eslint-disable-line no-unused-vars
-    const SCORE_THRESHOLD = .15;     // eslint-disable-line no-unused-vars
-    const IOU_THRESHOLD = .3;       // eslint-disable-line no-unused-vars
+    const SCORE_THRESHOLD = .5;     // eslint-disable-line no-unused-vars
+    const IOU_THRESHOLD = .45;       // eslint-disable-line no-unused-vars
 
-    const IMAGE_WIDTH=480
-    const IMAGE_HEIGHT=288
+    const YOLO_WIDTH=480
+    const YOLO_HEIGHT=352
+
+    const CANVAS_SIZE=360
+    const IMAGE_WIDTH=360
+    const IMAGE_HEIGHT=360
+
 
     export default {
         name: "YoloWebCam",
@@ -91,21 +96,22 @@
 
                 const modelUrl =v3_tiny_model;
                 const model = await tf.loadLayersModel(modelUrl);// eslint-disable-line no-unused-vars
+
                 await Camera.setup();
-
-
                 const video=Camera.webcamElement;
-                const ratio=Math.min(video.videoHeight,video.videoWidth)/Math.max(video.videoHeight,video.videoWidth);
+                const ratio=Math.min(IMAGE_HEIGHT,IMAGE_WIDTH)/Math.max(video.videoHeight,video.videoWidth);
                 const drawImage_Height=ratio*video.videoHeight;
                 const drawImage_Width=ratio*video.videoWidth;
-                const drawImage_X=(IMAGE_WIDTH-drawImage_Width)/2;
-                const drawImage_Y=(IMAGE_HEIGHT-drawImage_Height)/2;
+                const drawImage_X=(CANVAS_SIZE-drawImage_Width)/2;// eslint-disable-line
+                const drawImage_Y=(CANVAS_SIZE-drawImage_Height)/2;// eslint-disable-line
                 const CanvasContext=Canvas.getContext('2d');
                 CanvasContext.font="20px Times New Roman";
                 CanvasContext.fillStyle="rgb(0,0,255)";
                 CanvasContext.strokeStyle="rgb(0,0,255)";
 //                CanvasContext.globalCompositeOperation = 'source-atop';//重叠部分可见，其他透明。
                 var frameNum=0;
+
+                console.log("Canvas Size:",drawImage_Width,drawImage_Height)
                 while (true) // eslint-disable-line
                 {
                     frameNum=frameNum+1;
@@ -251,21 +257,20 @@
          * @param {number} width The real width of the video element.
          * @param {number} height The real height of the video element.
          */
-        adjustVideoSize(width, height,yolo_size) {  // eslint-disable-line
+        adjustVideoSize(/*width, height,*/yolo_size) {  // eslint-disable-line
+
+            this.webcamElement.width=YOLO_WIDTH
+            this.webcamElement.height=YOLO_HEIGHT
             /*
-            const aspectRatio = yolo_size/Math.max(width,height)
-            this.webcamElement.width=aspectRatio*this.webcamElement.width
-            this.webcamElement.height=aspectRatio*this.webcamElement.height
-            */
+
             const aspectRatio = width / height;
             if (width >= height) {
                 this.webcamElement.width = aspectRatio * this.webcamElement.height;
             } else if (width < height) {
                 this.webcamElement.height = this.webcamElement.width / aspectRatio;
             }
-
-            console.log(this.webcamElement.width)               // eslint-disable-line
-            console.log(this.webcamElement.height)              // eslint-disable-line
+            */
+            console.log("YOLO Size:",this.webcamElement.width,this.webcamElement.height)               // eslint-disable-line
         }
 
         async setup() {
@@ -279,7 +284,7 @@
                 return new Promise(resolve => {
                     this.webcamElement.onloadedmetadata = () => {
                         this.adjustVideoSize(
-                            IMAGE_WIDTH,IMAGE_HEIGHT,INPUT_SIZE);
+                            /*IMAGE_WIDTH,IMAGE_HEIGHT,*/INPUT_SIZE);
                         resolve();
                     };
                 });
@@ -301,8 +306,8 @@
         border-radius: 5px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         margin: 0 auto;
-        width: 480px;
-        height: 384px;
+        width: 360px;
+        height: 360px;
         position: relative;
     }
 </style>

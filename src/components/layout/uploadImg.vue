@@ -1,8 +1,10 @@
 <template>
-    <div style="max-width: 600px">
-        <a-card title="请将图片打包成 zip 压缩文件">
+    <div style="text-align: center;">
+        <a-card title="上传自己的人脸照片" style="max-width: 600px;margin: 0 auto;">
             <a-upload-dragger id="upload" name="file" :multiple="true" :action="getUploadUrl"
-                              @change="handleChange">
+                              @change="handleChange"
+                              :headers="header"
+            >
                 <p class="ant-upload-drag-icon">
                     <a-icon type="inbox"/>
                 </p>
@@ -23,6 +25,16 @@
                 filename: '',
             }
         },
+        computed: {
+            header: function () {
+                return {'Authorization': 'Token ' + localStorage.getItem('token')}
+            }
+        },
+        mounted() {
+            if (localStorage.getItem("faceed") == "no")
+                this.$message.error("请先认证！");
+            localStorage.removeItem("faceed")
+        },
         methods: {
             handleChange(info) {
                 const status = info.file.status;
@@ -35,11 +47,13 @@
                 } else if (status === 'error') {
                     this.$message.error(`${info.file.name} file upload failed.`);
                 }
-            },
+            }
+            ,
             getUploadUrl(info) {
                 return api.uploadImage(info.name);
             }
-        },
+        }
+        ,
     }
 </script>
 

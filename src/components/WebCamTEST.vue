@@ -19,11 +19,8 @@
         <button @click="get" >运行</button>
         <div class="webcam-ui-container">
             <div id="webcam-wrapper">
-                <!--
-                <video ref="myvideo" width="288" height="288" playsinline autoplay muted ></video>
-                -->
-                <canvas ref="canvas" id="canvas" width="288" height="288" style="margin: auto;"></canvas>
-
+                <video ref="myvideo" width="480" height="180" playsinline autoplay muted ></video>
+                <canvas ref="canvas" id="canvas" width="480" height="360" style="margin: auto;"></canvas>
             </div>
             <div>
             </div>
@@ -60,20 +57,8 @@
         methods: {
             async get() {
 
-                const mVideo = document.createElement('video');
-                mVideo.height=INPUT_SIZE;
-                mVideo.width=INPUT_SIZE;
-//                mVideo.playsinline=true;
-//                mVideo.autoplay = true;
-                mVideo.setAttribute('muted',true);
-                mVideo.setAttribute('autoplay',true);
-                mVideo.setAttribute('playsinline',true);
-//                mVideo.setAttribute('webkit-playsinline', true);
-                //不加这行谷歌浏览器运行一些会有问题
-//                mVideo.play();
-
-//                const webCam = new Webcam(this.$refs['myvideo']);
-                const webCam = new Webcam(mVideo);
+                const webCam = new Webcam(this.$refs['myvideo']);
+//                const webCam = new Webcam(mVideo);
 
                 await webCam.setup();
 
@@ -236,9 +221,7 @@
                 this.webcamElement.srcObject = stream;
                 return new Promise(resolve => {
                     this.webcamElement.onloadedmetadata = () => {
-                        this.adjustVideoSize(
-                            INPUT_SIZE,
-                            INPUT_SIZE);
+                        //this.adjustVideoSize(INPUT_SIZE, INPUT_SIZE);
                         resolve();
                     };
                 });
@@ -260,8 +243,8 @@
         border-radius: 5px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         margin: 0 auto;
-        width: 288px;
-        height: 288px;
+        width: 1200px;
+        height: 1200px;
         position: relative;
     }
 </style>

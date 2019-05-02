@@ -1,13 +1,13 @@
 <template>
-    <a-table :columns="columns" :dataSource="data" bordered>
-        <template slot="name" slot-scope="text">
-            <a href="javascript:;">{{text}}</a>
-        </template>
-        <template slot="title" slot-scope="currentPageData">
-            Header
-        </template>
-        <template slot="footer" slot-scope="currentPageData">
-            Footer
+    <a-table :columns="columns"
+             :rowKey="data => data.id"
+             :dataSource="data"
+             :pagination="pagination"
+             :loading="loading"
+             @change="handleTableChange"
+    >
+        <template slot="time" slot-scope="time">
+            {{time}}
         </template>
     </a-table>
 </template>
@@ -16,14 +16,14 @@
     import api from "@/common/api";
 
     const columns = [{
-            title: 'time',
+            title: '时间',
             dataIndex: 'time',
             sorter: true,
             width: '20%',
             scopedSlots: {customRender: 'time'},
         }, {
-            title: 'student',
-            dataIndex: 'student',
+            title: '学生',
+            dataIndex: 'student_info.name',
             width: '20%',
         },
         ]
@@ -31,7 +31,7 @@
     export default {
         name: "welcomeData",
         mounted() {
-            this.getList();
+            this.fetch();
         },
         data() {
             return {
@@ -42,6 +42,37 @@
             }
         },
         methods: {
+            handleTableChange (pagination, filters, sorter) {
+                console.log(pagination);
+                const pager = { ...this.pagination };
+                pager.current = pagination.current;
+                this.pagination = pager;
+                this.fetch({
+                    results: pagination.pageSize,
+                    page: pagination.current,
+                    sortField: sorter.field,
+                    sortOrder: sorter.order,
+                    ...filters,
+                });
+            },
+            fetch (params = {}) {
+                console.log('params:', params);
+                this.loading = true
+                api.welcomeDataList(params.sortOrder,params.page).then((response) => {
+                    const pagination = { ...this.pagination };
+                    // Read total count from server
+                    pagination.total = response.data.count;
+                    this.loading = false;
+                    this.data = response.data.results;
+                    this.pagination = pagination;
+                });
+            },
+
+
+
+
+
+
             getList() {
                 api.welcomeDataList().then((request) => {
                     this.data = request.data.results;

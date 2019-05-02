@@ -58,6 +58,8 @@
 </template>
 
 <script>
+    import api from "@/common/api";
+
     export default {
         name: "login",
         data() {
@@ -82,8 +84,17 @@
                 let username = this.loginForm.username;
                 let password = this.loginForm.password;
                 this.$store.dispatch('login', {username, password})
-                    .then(() => this.$router.push('/uploadImg'))
-                    .catch(err => console.log(err))
+                    .then(() => {
+                        api.getYearCheckInEvent().then(response => {
+                            localStorage.setItem("yearcheckinevent", response.data.results[0]["id"].toString());
+                        });
+                        api.getStudent(this.$store.state.username).then(response => {
+                            const stu_info = response.data.results[0];
+                            localStorage.setItem("stu_id", stu_info["id"])
+                        });
+                        this.$router.push('/uploadImg')
+                    })
+                    .catch(err => console.log(err));
             },
         },
     }

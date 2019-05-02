@@ -2,9 +2,10 @@
     <a-menu
             @click="handleClick"
             style="width: 230px"
-            :defaultSelectedKeys="['1']"
+            :defaultSelectedKeys="['/uploadImg']"
             :openKeys.sync="openKeys"
             mode="inline"
+            :selectedKeys="current"
     >
         <a-sub-menu key="sub1" @titleClick="titleClick">
             <span slot="title"><a-icon type="mail"/><span>迎 新 系 统</span></span>
@@ -13,33 +14,26 @@
                     <a-icon type="picture"/>
                     <span> 文件操作</span>
                 </template>
-                <a-menu-item key="1">上传图片文件</a-menu-item>
-                <a-menu-item key="2">查看图片</a-menu-item>
+                <a-menu-item key="/uploadImg">上传图片文件</a-menu-item>
+                <a-menu-item key="/myImage">查看图片</a-menu-item>
             </a-menu-item-group>
             <a-menu-item-group key="g2">
                 <template slot="title">
-                    <a-icon type="setting"/>
-                    <span> 迎新设置</span>
-                </template>
-                <a-menu-item key="3">开启本年度迎新</a-menu-item>
-                <a-menu-item key="4">迎新数据</a-menu-item>
-            </a-menu-item-group>
-            <a-menu-item-group key="g3">
-                <template slot="title">
-                    <a-icon type="setting"/>
+                    <a-icon type="smile"/>
                     <span> 迎新签到</span>
                 </template>
-                <a-menu-item key="5">签到</a-menu-item>
-                <a-menu-item key="6">迎新数据展示</a-menu-item>
+                <a-menu-item key="/face">签到</a-menu-item>
+                <a-menu-item key="/welcomeData">迎新数据</a-menu-item>
+                <a-menu-item key="5">迎新数据展示</a-menu-item>
             </a-menu-item-group>
         </a-sub-menu>
         <a-sub-menu key="sub2" @titleClick="titleClick">
-            <span slot="title"><a-icon type="appstore"/><span>其他</span></span>
-            <a-menu-item key="1">Option 1</a-menu-item>
-            <a-menu-item key="2">Option 2</a-menu-item>
-            <a-sub-menu key="sub3" title="Submenu">
-                <a-menu-item key="1">Option 1</a-menu-item>
-                <a-menu-item key="2">Option 2</a-menu-item>
+            <span slot="title"><a-icon type="appstore"/><span>新生信息</span></span>
+            <a-menu-item key="/myInformation">我的信息</a-menu-item>
+            <a-menu-item key="/publicInfo">公告</a-menu-item>
+            <a-sub-menu key="sub3" title="新生讨论">
+                <a-menu-item key="/allPostCard">所有帖子</a-menu-item>
+                <a-menu-item key="9">我的帖子</a-menu-item>
             </a-sub-menu>
         </a-sub-menu>
     </a-menu>
@@ -50,40 +44,53 @@
         name: "navBar",
         data() {
             return {
-                current: ['mail'],
                 openKeys: ['sub1'],
+            }
+        },
+        computed:{
+            current(){
+                return [this.$route.path];
             }
         },
         methods: {
             handleClick(e) {
-                switch (e.keyPath[1]) {
-                    case 'sub1':
-                        switch (e.keyPath[0]) {
-                            case '1':
-                                this.$router.push('/uploadImg');
-                                break;
-                            case '2':
-                                break;
-                            case '3':
-                                this.$router.push('/startWelcome');
-                                break;
-                            case '4':
-                                this.$router.push('/welcomeData');
-                                break;
-
-                        }
+                switch (e.key) {
+                    case '/uploadImg':
+                        this.$router.push('/uploadImg');
+                        break;
+                    case '/myImage':
+                        this.$router.push('/myImage');
+                        break;
+                    case '/face':
+                        this.$router.push('/face');
+                        break;
+                    case '/welcomeData':
+                        this.$router.push('/welcomeData');
+                        break;
+                    case '/myInformation':
+                        this.$router.push('/myInformation');
+                        break;
+                    case '/publicInfo':
+                        this.$router.push('/publicInfo');
+                        break;
+                    case '/allPostCard':
+                        this.$router.push('/allPostCard');
+                        break;
                 }
                 console.log('click', e)
             },
             titleClick(e) {
                 console.log('titleClick', e)
-            },
+            }
+            ,
         },
         watch: {
             openKeys(val) {
                 console.log('openKeys', val)
-            },
-        },
+            }
+            ,
+        }
+        ,
     }
 </script>
 

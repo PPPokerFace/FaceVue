@@ -16,7 +16,7 @@ const api_UPLOAD_IMAGE = api_HOST + "/upload-image/";
 const api_PUBLIC_INFO = api_HOST + "/publicinfo/";
 const api_POST_CARD = api_HOST + "/postcard/";
 const api_IS_IMAGE_UPLOAD_THIS_YEAR = api_HOST + '/is-image-upload-this-year/';
-const api_COMMENT = api_HOST + '/comment/'
+const api_COMMENT = api_HOST + '/comment/';
 
 
 export default {
@@ -106,6 +106,10 @@ export default {
     },
     getMyImage: function () {
         return Vue.prototype.$axios.get(api_UPLOAD_IMAGE)
+    },
+    deleteMyImage:function(filename){
+        const param={"name":filename}
+        return Vue.prototype.$axios.delete(api_UPLOAD_IMAGE, {data:JSON.stringify(param)})
     },
     isReadyThisYear: async function () {
         return Vue.prototype.$axios.get(api_IS_IMAGE_UPLOAD_THIS_YEAR);

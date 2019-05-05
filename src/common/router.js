@@ -11,11 +11,14 @@ import MyInformation from '../components/layout/myInformation.vue'
 import PublicInfo from '../components/layout/publicInfo.vue'
 import AllPostCard from '../components/layout/allPostCard.vue'
 
-import Layouttest from '../components/layout'
+import YoloWebCam from '../components/YoloWebCamXI'
 import api from "./api";
 
-Vue.use(VueRouter);
+import ObjectDetection from "../components/ObjectDetection";
+import gps from "../components/layout/gps"
+import adminInfo from "../components/layout/adminInfo"
 
+Vue.use(VueRouter);
 
 const router = new VueRouter({
     mode: 'history',
@@ -38,7 +41,7 @@ const router = new VueRouter({
         {
             path: '/face',
             name: 'face',
-            component: Layouttest
+            component: YoloWebCam
         },
         {
             path: '/Home',
@@ -64,6 +67,21 @@ const router = new VueRouter({
             path:'/publicInfo',
             name:'publicInfo',
             component:PublicInfo
+        },
+        {
+            path:'/objectDetection',
+            name:'objectDetection',
+            component:ObjectDetection
+        },
+        {
+            path:'/gps',
+            name:'gps',
+            component:gps
+        },
+        {
+            path:'/adminInfo',
+            name:'adminInfo',
+            component:adminInfo
         }
 
     ]

@@ -37,6 +37,7 @@
         },
         methods: {
             handleChange(info) {
+                console.log(info)
                 const status = info.file.status;
                 this.filename = info.name;
                 if (status !== 'uploading') {
@@ -45,6 +46,7 @@
                 if (status === 'done') {
                     this.$message.success(`${info.file.name} file uploaded successfully.`);
                 } else if (status === 'error') {
+
                     this.$message.error(`${info.file.name} file upload failed.`);
                 }
             }

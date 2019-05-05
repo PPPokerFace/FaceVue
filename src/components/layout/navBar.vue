@@ -36,6 +36,12 @@
                 <a-menu-item key="9">我的帖子</a-menu-item>
             </a-sub-menu>
         </a-sub-menu>
+        <a-sub-menu key="sub3" @titleClick="titleClick">
+            <span slot="title"><a-icon type="appstore"/><span>测试功能区</span></span>
+            <a-menu-item key="/objectDetection">模型性能估计</a-menu-item>
+            <a-menu-item key="/gps">GPS定位</a-menu-item>
+        </a-sub-menu>
+
     </a-menu>
 </template>
 
@@ -76,8 +82,16 @@
                     case '/allPostCard':
                         this.$router.push('/allPostCard');
                         break;
+                    case '/objectDetection':
+                        this.$router.push('/objectDetection');
+                        break;
+                    case '/gps':
+                        this.$router.push('/gps');
+                        break;
+                    case '/adminInfo':
+                        this.$router.push('/adminInfo');
+                        break;
                 }
-                console.log('click', e)
             },
             titleClick(e) {
                 console.log('titleClick', e)

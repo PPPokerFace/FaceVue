@@ -66,8 +66,10 @@
             }
         },
         mounted() {
-            if (document.body.clientWidth < document.body.clientHeight) {
+            if (document.body.clientWidth < document.body.clientHeight || this.$route.path == '/welcomeDataShow') {
                 this.visible = false;
+            } else {
+                this.visible = true;
             }
         },
     }

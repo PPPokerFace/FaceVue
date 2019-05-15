@@ -225,10 +225,10 @@
 
                                 api.getStudent(matchRes).then((response) => {
                                     console.log(response);// eslint-disable-line
-                                    const id = response.data.results[0]["id"];
+                                    const stu_number = response.data.results[0]["stu_number"];
                                     this.new_stu_name = response.data.results[0]["name"];
-                                    if (id != undefined) {
-                                        api.addWelcomeData(id);
+                                    if (stu_number != undefined) {
+                                        api.addWelcomeData(stu_number);
                                     }
                                     console.log(id);// eslint-disable-line
                                 });

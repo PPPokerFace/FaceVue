@@ -6,10 +6,12 @@ import Login from '../components/layout/login.vue'
 import Home from '../components/layout/home.vue'
 import UploadImg from '../components/layout/uploadImg.vue'
 import WelcomeData from '../components/layout/welcomeData.vue'
+import WelcomeDataShow from '../components/layout/welcomeDataShow.vue'
 import MyImage from '../components/layout/myImage.vue'
 import MyInformation from '../components/layout/myInformation.vue'
 import PublicInfo from '../components/layout/publicInfo.vue'
 import AllPostCard from '../components/layout/allPostCard.vue'
+import MyPostCard from '../components/layout/myPostCard.vue'
 
 import YoloWebCam from '../components/YoloWebCamXI'
 import api from "./api";
@@ -17,6 +19,7 @@ import api from "./api";
 import ObjectDetection from "../components/ObjectDetection";
 import gps from "../components/layout/gps"
 import adminInfo from "../components/layout/adminInfo"
+import monitor from "../components/monitor"
 
 Vue.use(VueRouter);
 
@@ -39,6 +42,11 @@ const router = new VueRouter({
             component: WelcomeData
         },
         {
+            path: '/welcomeDataShow',
+            name: 'welcomeDataShow',
+            component: WelcomeDataShow
+        },
+        {
             path: '/face',
             name: 'face',
             component: YoloWebCam
@@ -59,29 +67,39 @@ const router = new VueRouter({
             component: MyInformation
         },
         {
-            path:'/allPostCard',
-            name:'allPostCard',
-            component:AllPostCard
+            path: '/allPostCard',
+            name: 'allPostCard',
+            component: AllPostCard
         },
         {
-            path:'/publicInfo',
-            name:'publicInfo',
-            component:PublicInfo
+            path: '/myPostCard',
+            name: 'myPostCard',
+            component: MyPostCard
         },
         {
-            path:'/objectDetection',
-            name:'objectDetection',
-            component:ObjectDetection
+            path: '/publicInfo',
+            name: 'publicInfo',
+            component: PublicInfo
         },
         {
-            path:'/gps',
-            name:'gps',
-            component:gps
+            path: '/objectDetection',
+            name: 'objectDetection',
+            component: ObjectDetection
         },
         {
-            path:'/adminInfo',
-            name:'adminInfo',
-            component:adminInfo
+            path: '/gps',
+            name: 'gps',
+            component: gps
+        },
+        {
+            path: '/adminInfo',
+            name: 'adminInfo',
+            component: adminInfo
+        },
+        {
+            path: '/monitor',
+            name: 'monitor',
+            component: monitor
         }
 
     ]
@@ -112,6 +130,15 @@ router.beforeEach((to, from, next) => {
             })
         }
         next();
+    }
+    if (to.path == '/uploadImg') localStorage.setItem('refresh', 'yes');
+    if (localStorage.getItem('refresh') == 'no' && to.path != '/welcomeDataShow') {
+        localStorage.setItem('refresh', 'yes');
+        window.location.reload();
+    }
+    if (localStorage.getItem('refresh') == 'yes' && to.path == '/welcomeDataShow') {
+        localStorage.setItem('refresh', 'no');
+        window.location.reload();
     }
 });
 

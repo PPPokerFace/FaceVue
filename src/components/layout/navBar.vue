@@ -24,7 +24,7 @@
                 </template>
                 <a-menu-item key="/face">签到</a-menu-item>
                 <a-menu-item key="/welcomeData">迎新数据</a-menu-item>
-                <a-menu-item key="5">迎新数据展示</a-menu-item>
+                <a-menu-item key="/welcomeDataShow">迎新数据展示</a-menu-item>
             </a-menu-item-group>
         </a-sub-menu>
         <a-sub-menu key="sub2" @titleClick="titleClick">
@@ -33,13 +33,14 @@
             <a-menu-item key="/publicInfo">公告</a-menu-item>
             <a-sub-menu key="sub3" title="新生讨论">
                 <a-menu-item key="/allPostCard">所有帖子</a-menu-item>
-                <a-menu-item key="9">我的帖子</a-menu-item>
+                <a-menu-item key="/myPostCard">我的帖子</a-menu-item>
             </a-sub-menu>
         </a-sub-menu>
         <a-sub-menu key="sub3" @titleClick="titleClick">
             <span slot="title"><a-icon type="appstore"/><span>测试功能区</span></span>
             <a-menu-item key="/objectDetection">模型性能估计</a-menu-item>
             <a-menu-item key="/gps">GPS定位</a-menu-item>
+            <a-menu-item key="/monitor">【测试】监控</a-menu-item>
         </a-sub-menu>
 
     </a-menu>
@@ -53,8 +54,8 @@
                 openKeys: ['sub1'],
             }
         },
-        computed:{
-            current(){
+        computed: {
+            current() {
                 return [this.$route.path];
             }
         },
@@ -73,6 +74,9 @@
                     case '/welcomeData':
                         this.$router.push('/welcomeData');
                         break;
+                    case '/welcomeDataShow':
+                        this.$router.push('/welcomeDataShow');
+                        break;
                     case '/myInformation':
                         this.$router.push('/myInformation');
                         break;
@@ -81,6 +85,9 @@
                         break;
                     case '/allPostCard':
                         this.$router.push('/allPostCard');
+                        break;
+                    case '/myPostCard':
+                        this.$router.push('/myPostCard');
                         break;
                     case '/objectDetection':
                         this.$router.push('/objectDetection');
@@ -91,7 +98,11 @@
                     case '/adminInfo':
                         this.$router.push('/adminInfo');
                         break;
+                    case '/monitor':
+                        this.$router.push('/monitor');
+                        break;
                 }
+
             },
             titleClick(e) {
                 console.log('titleClick', e)

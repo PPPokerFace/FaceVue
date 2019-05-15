@@ -90,7 +90,7 @@
                         });
                         api.getStudent(this.$store.state.username).then(response => {
                             const stu_info = response.data.results[0];
-                            localStorage.setItem("stu_id", stu_info["id"])
+                            localStorage.setItem("stu_number", stu_info["stu_number"])
                         });
                         this.$router.push('/uploadImg')
                     })

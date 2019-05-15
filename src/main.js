@@ -12,6 +12,7 @@ import 'ant-design-vue/dist/antd.css'
 import api from './common/api.js'
 import store from './common/store.js'
 import router from './common/router.js'
+import VCharts from 'v-charts'
 
 Vue.config.productionTip = false
 
@@ -25,13 +26,15 @@ if (token) {
   Vue.prototype.$axios.defaults.headers.common['Authorization'] = 'Token ' + token;
 }
 
+
 Vue.use(Antd);
 // Vue.use(ElementUI);
 Vue.use(Vuex);
 Vue.use(VueRouter);
+Vue.use(VCharts);
 
 new Vue({
   render: h => h(App),
   router,
-}).$mount('#app')
+}).$mount('#app');
 

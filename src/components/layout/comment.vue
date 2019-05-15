@@ -10,8 +10,9 @@
                           {rules: [{ required: true, message: 'Please input your note!' }]}
                         ]"
         />
-        <a-button type="primary" @click="handleClick" block>评论</a-button>
-
+        <a-button type="primary" @click="handleClick" :style='{marginBottom:"3px"}' block>评论
+        </a-button>
+        <a-button type="danger" block v-show="this.delete_able" v-on:click="handelDelete">删除</a-button>
         <a-list
                 class="comment-list"
                 :header="`${data.length} replies`"
@@ -42,6 +43,9 @@
         props: {
             select_postcard_id: {
                 default: 0,
+            },
+            delete_able: {
+                default: false,
             }
         },
         mounted() {
@@ -72,6 +76,11 @@
                         this.new_text = ''
                     })
                 })
+            },
+            handelDelete() {
+                api.deletePostCard(this.currentValue).then(response => {
+                    window.location.reload();
+                });
             }
         }
 

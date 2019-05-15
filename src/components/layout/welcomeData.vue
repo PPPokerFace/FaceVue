@@ -68,11 +68,6 @@
                 });
             },
 
-
-
-
-
-
             getList() {
                 api.welcomeDataList().then((request) => {
                     this.data = request.data.results;

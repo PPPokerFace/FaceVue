@@ -36,8 +36,11 @@
             nvaLeft,
         },
         mounted() {
-            if (document.body.clientWidth < document.body.clientHeight) {
+            if (document.body.clientWidth < document.body.clientHeight||this.$route.path=='/welcomeDataShow') {
                 this.visiable = true;
+            }
+            else {
+                this.visiable = false;
             }
         },
 

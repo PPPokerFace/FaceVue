@@ -6,7 +6,7 @@
                 @close="onClose"
                 :visible="commen_visible"
         >
-            <comment :select_postcard_id="select_postcard_id" ></comment>
+            <comment :select_postcard_id="select_postcard_id" :delete_able="delete_able"></comment>
         </a-drawer>
 
 
@@ -68,7 +68,6 @@
             </a-list-item>
         </a-list>
     </div>
-
 </template>
 
 <script>
@@ -77,7 +76,7 @@
     import Comment from './comment.vue'
 
     export default {
-        name: "allPostCard",
+        name: "myPostCard",
         components: {
             AFormItem,
             Comment,
@@ -108,7 +107,7 @@
         },
         methods: {
             getData(callback) {
-                api.postCardList(this.page).then(response => {
+                api.myPostCardList(this.page).then(response => {
                     callback(response.data.results)
                     this.page++;
                 })
@@ -150,6 +149,7 @@
             handleClickPostCard(id) {
                 this.commen_visible = true;
                 this.select_postcard_id = id;
+                this.delete_able = true;
             },
             onClose() {
                 this.commen_visible = false;

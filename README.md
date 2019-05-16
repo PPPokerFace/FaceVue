@@ -1,6 +1,13 @@
 # FaceFinal前端系统
 
+## Introduction
+FaceFinal前端系统
+
 ## 更新日志
+#### 2019.5.17
+- 作品验收版本上传
+- 增加了注册的功能
+- 修复了上传图片角度偏转的问题
 #### 2019.5.15
 - 增加了一些新的小功能
 - 增加了大数据展板的功能
@@ -14,31 +21,3 @@
 #### 2019.4.13 
 - 中期答辩版本上传
 
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

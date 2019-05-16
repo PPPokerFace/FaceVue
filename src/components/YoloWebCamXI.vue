@@ -1,20 +1,8 @@
 <template>
+    <div>
     <a-card title="Camera">
         <a-button type="primary" @click="get" slot="extra" :disabled="disabled">Run</a-button>
         <div ref="yolo_div">
-
-            <!--<a href="#" slot="extra">more</a>-->
-            <div ref="error_message" style="display:none">
-                Sorry! An error occured while loading the model 😢
-                <br>
-                If you're on an iPhone, please try using Safari.
-            </div>
-            <div ref="success_message" style="display:none">
-                摄像头开启成功.. .<br/>
-                【注意】网页会下载约5M的神经网络模型<br/>
-                【注意】此外会预读取20帧空帧，请耐心等待...
-            </div>
-
             <div class="webcam-ui-container" style="text-align: center">
                 <a-spin tip="Loading..." :spinning="loading">
                     <div ref="webcam-wrapper" id="webcam-wrapper"
@@ -26,17 +14,24 @@
                                 style="margin: auto;"></canvas>
                     </div>
                 </a-spin>
-                <div>{{ matchRes }} {{matchScore}}</div>
+                <!--<div>{{ matchRes }} {{matchScore}}</div>-->
 
+                <a-progress :percent="matchScore*100" :showInfo="false"/>
+                <div style="text-align: left">
+                    <a-tag>{{ matchRes }}</a-tag>
+                </div>
             </div>
         </div>
     </a-card>
+    </div>
 </template>
 
 <script>
     import * as tf from "@tensorflow/tfjs"
     import {v3_tiny_model_url,yolo,magicRectangle,} from "./yoloApi"
+    import {getLocation,calcDistanceWithJSUT} from '../common/gpsApi'
     import api from '@/common/api'
+
 
     const YOLO_HEIGHT = 352;
     const YOLO_WIDTH = 480;
@@ -50,7 +45,7 @@
                 canvas_height: 10,
                 webcap_wrapper_width: 100,
                 webcap_wrapper_height: 100,
-                matchRes: 0,
+                matchRes: '未识别',
                 matchScore: 0,
                 matchTimes: 0,
                 disabled: false,
@@ -59,6 +54,7 @@
                 stream: 0,
                 new_stu_name: '',
                 old_stu_name: '',
+                distance:0
             }
         },
         watch: {
@@ -71,6 +67,14 @@
                         this.openNotificationError();
                     }
                 }
+            }
+        },
+        mounted()
+        {
+            const location=getLocation()
+            if(location[0]==true)
+            {
+                this.distance=calcDistanceWithJSUT(location[1],location[2]);
             }
         },
 
@@ -214,12 +218,24 @@
                     if (frameNum % 10 == 0 && boxes.length!==0) {
                         //https://blog.csdn.net/csdn_yudong/article/details/79668655
                         //for this code
-                        let that = this
+                        let that = this;
+
+                        const loginName=localStorage.getItem("username");
 
                         api.sendImage(Canvas, bboxs, true).then((response) => {
                             const matchRes = response.data.face[0].match;
                             const matchScore = response.data.face[0].similarity;
                             if (matchScore >= 0.66) {
+                                // 匹配到的不是本人...
+                                if(matchRes!==loginName)
+                                    return ;
+
+
+                                // 距离很远
+                                // if(that.distance>=2000)
+                                //     return ;
+
+
                                 that.matchRes = matchRes;
                                 that.matchScore = matchScore;
 
@@ -227,15 +243,13 @@
                                     console.log(response);// eslint-disable-line
                                     const stu_number = response.data.results[0]["stu_number"];
                                     this.new_stu_name = response.data.results[0]["name"];
-                                    if (stu_number != undefined) {
+                                    if (stu_number !== undefined) {
                                         api.addWelcomeData(stu_number);
                                     }
-                                    console.log(id);// eslint-disable-line
                                 });
                             } else {
-
-                                that.matchRes = 0;
-                                that.matchScore = 0;
+                                that.matchRes = "未识别";
+                                that.matchScore = "";
                             }
                         });
                     }
@@ -243,7 +257,7 @@
                     const endTime = performance.now();// eslint-disable-line
 
                     //do something log ...
-                    if (frameNum % 200 == 0) {
+                    if (frameNum % 200 === 0) {
                         console.log("inference: " + (endTime - startTime) + " milliseconds."); // eslint-disable-line
                         console.log('tf.memory(): ', tf.memory()); // eslint-disable-line
                     }

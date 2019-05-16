@@ -46,10 +46,17 @@
                 <a-form-item>
                     <a-button
                             type="primary"
-                            html-type="submit"
                             class="login-form-button"
+                            v-on:click="handleSubmit"
                     >
                         Log in
+                    </a-button>
+                    <a-button
+                            type="default"
+                            class="login-form-button"
+                            v-on:click="handleRegister"
+                    >
+                        Register
                     </a-button>
                 </a-form-item>
             </a-form>
@@ -75,7 +82,7 @@
         },
         methods: {
             handleSubmit(e) {
-                e.preventDefault();
+                // e.preventDefault();
                 // this.form.validateFields((err, values) => {
                 //     if (!err) {
                 //         console.log('Received values of form: ', values);
@@ -92,10 +99,19 @@
                             const stu_info = response.data.results[0];
                             localStorage.setItem("stu_number", stu_info["stu_number"])
                         });
-                        this.$router.push('/uploadImg')
+                        this.$router.push('/publicInfo')
                     })
                     .catch(err => console.log(err));
+                console.log('111')
             },
+            handleRegister(e) {
+                let username = this.loginForm.username;
+                let password = this.loginForm.password;
+                api.register(username, password).then(response => {
+                    this.handleSubmit(null)
+                })
+
+            }
         },
     }
 </script>

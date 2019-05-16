@@ -1,14 +1,15 @@
 import Vue from 'vue'
 
 //const api_HOST = "https://192.168.1.102/b";
-//const api_HOST = "https://192.168.0.105/b";
+//const api_HOST = "https://192.168.43.37/b";
 const api_HOST = "https://127.0.0.1/b";
-//const api_HOST = "http://127.0.0.1:8000";
+//const ws_HOST = "wss://192.168.1.102/b";          // WebSocket
 const ws_HOST = "wss://127.0.0.1/b";          // WebSocket
-//const api_HOST = "https://192.168.3.10/b";
+//const ws_HOST = "wss://192.168.43.37/b";          // WebSocket
 const api_SEND_IMAGE = api_HOST + "/face-recognition/";
 
 const api_LOGIN = api_HOST + "/api-token-auth/";
+const api_REGISTER = api_HOST + '/auth-user/';
 
 const api_STUDENT = api_HOST + "/students/";
 const api_WELCOME_DATA = api_HOST + "/yearcheckindata/";
@@ -31,7 +32,7 @@ export default {
     getWsMonitor: function () {
         return ws_MONITOR;
     },
-    getWsWelcomeData:function(){
+    getWsWelcomeData: function () {
         return ws_WELCOME_DATA;
     },
     sendImage: function (canvas, bbox = [], detected = false,
@@ -64,6 +65,12 @@ export default {
         param.append("username", username);
         param.append("password", password);
         return Vue.prototype.$axios.post(api_LOGIN, param);
+    },
+    register: function (username, password) {
+        let param = new URLSearchParams();
+        param.append("username", username);
+        param.append("password", password);
+        return Vue.prototype.$axios.post(api_REGISTER, param);
     },
     studentList: function () {
         return Vue.prototype.$axios.get(api_STUDENT);

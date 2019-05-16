@@ -2,7 +2,7 @@ import{
     v3_tiny_model,
     v3_tiny_anchors,
     faceClasses,
-    predict
+    predict,
 } from './yoloProcess';
 
 const MAX_BOXES = 20;
@@ -12,6 +12,7 @@ const IOU_THRESHOLD = .45;
 export const v3_tiny_model_url=v3_tiny_model;
 export async function yolo(
     model, image, imageSize) {
+
     return predict(
         "v3_tiny_model",
         model,
@@ -23,6 +24,24 @@ export async function yolo(
         v3_tiny_anchors,
         faceClasses,
         imageSize)
+}
+
+export function letterbox(
+    canvas,yoloSize)
+{
+    const oldShape=[canvas.height,canvas.width];
+    const ratio= Math.min(yoloSize[0] / oldShape[0], yoloSize[1]/oldShape[1])
+    const newSize=[oldShape[0]*ratio,oldShape[1]*ratio];
+
+    const dh=(yoloSize[0]-newSize[0])/2;
+    const dw=(yoloSize[1]-newSize[1])/2;
+
+    const newCanvas=document.createElement("canvas");
+    newCanvas.height=yoloSize[0];
+    newCanvas.width=yoloSize[1];
+    newCanvas.getContext("2d").drawImage(canvas, dw, dh, newSize[1], newSize[0]);
+    return newCanvas
+
 }
 
 export function magicRectangle(context, x, y, width, height) {

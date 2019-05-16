@@ -20,6 +20,7 @@ import ObjectDetection from "../components/ObjectDetection";
 import gps from "../components/layout/gps"
 import adminInfo from "../components/layout/adminInfo"
 import monitor from "../components/monitor"
+import WelcomeDataShowPhone from "../components/layout/WelcomeDataShowPhone";
 
 Vue.use(VueRouter);
 
@@ -45,6 +46,11 @@ const router = new VueRouter({
             path: '/welcomeDataShow',
             name: 'welcomeDataShow',
             component: WelcomeDataShow
+        },
+        {
+            path: '/welcomeDataShowPhone',
+            name: 'welcomeDataShowPhone',
+            component: WelcomeDataShowPhone
         },
         {
             path: '/face',

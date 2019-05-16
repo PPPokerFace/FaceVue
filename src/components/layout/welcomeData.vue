@@ -41,10 +41,15 @@
                 columns,
             }
         },
+        prpos: {
+            refresh: {
+                default: 0
+            }
+        },
         methods: {
-            handleTableChange (pagination, filters, sorter) {
+            handleTableChange(pagination, filters, sorter) {
                 console.log(pagination);
-                const pager = { ...this.pagination };
+                const pager = {...this.pagination};
                 pager.current = pagination.current;
                 this.pagination = pager;
                 this.fetch({
@@ -55,11 +60,11 @@
                     ...filters,
                 });
             },
-            fetch (params = {}) {
+            fetch(params = {}) {
                 console.log('params:', params);
                 this.loading = true
-                api.welcomeDataList(params.sortOrder,params.page).then((response) => {
-                    const pagination = { ...this.pagination };
+                api.welcomeDataList(params.sortOrder, params.page).then((response) => {
+                    const pagination = {...this.pagination};
                     // Read total count from server
                     pagination.total = response.data.count;
                     this.loading = false;
@@ -72,6 +77,15 @@
                 api.welcomeDataList().then((request) => {
                     this.data = request.data.results;
                 })
+            }
+        },
+        watch: {
+            refresh: {
+                handler(value, oldvalue) {
+                    this.refresh = this.refresh - 1;
+                    this.fetch();
+                },
+                immediate: true,
             }
         }
 

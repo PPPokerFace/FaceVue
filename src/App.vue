@@ -26,7 +26,6 @@
 <script>
     //import HelloWorld from './components/HelloWorld.vue'
     //import YoloWebCam from './components/YoloWebCamHTTP'            // eslint-disable-line
-    import layouttest from './components/layout.vue'
 
     // 自己的组件
     import login from './components/layout/login.vue'
@@ -43,11 +42,8 @@
         },
         components: {
             //YoloWebCam,                                 // eslint-disable-line
-            layouttest,
             // 自己的组件
-            login,
             loginHeader,
-            navLeft,
             navBar,
         },
         methods: {

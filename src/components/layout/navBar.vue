@@ -75,7 +75,11 @@
                         this.$router.push('/welcomeData');
                         break;
                     case '/welcomeDataShow':
-                        this.$router.push('/welcomeDataShow');
+                        if(document.body.clientWidth > document.body.clientHeight)
+                            this.$router.push('/welcomeDataShow');
+                        else
+                            this.$router.push('/welcomeDataShowPhone')
+
                         break;
                     case '/myInformation':
                         this.$router.push('/myInformation');

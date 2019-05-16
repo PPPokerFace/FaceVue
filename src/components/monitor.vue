@@ -152,18 +152,17 @@
                     const dataurl = "data:image/jpeg;base64," + data["image"]
                     const img = new Image();
                     let canvas = this.$refs["canvas"];
-                    img.src = dataurl;
                     const faceInfoList = this.faceInfo
                     img.onload = function () {
                         canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
                         faceInfo.forEach((face) => {
                             faceInfoList.unshift(face)
                             if(faceInfoList.length>5)
-                            {
                                 faceInfoList.pop()
-                            }
                         })
                     };
+                    img.src = dataurl;
+
                 }
             },
             webSocketOnSend(Data) {//数据发送

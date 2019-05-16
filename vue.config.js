@@ -2,8 +2,8 @@
 //官方vue.config.js 参考文档 https://cli.vuejs.org/zh/config/#css-loaderoptions
 // 这里只列一部分，具体配置参考文档
 const CompressionPlugin = require('compression-webpack-plugin');
-const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
-
+const productionGzipExtensions = ['js', 'json','css', 'txt', 'html', 'ico', 'svg'];
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = {
     // 部署生产环境和开发环境下的URL。
     // 默认情况下，Vue CLI 会假设你的应用是被部署在一个域名的根路径上
@@ -17,7 +17,7 @@ module.exports = {
     //指定生成的 index.html 的输出路径  (打包之后，改变系统默认的index.html的文件名)
     indexPath: "index.html",
     //默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。你可以通过将这个选项设为 false 来关闭文件名哈希。(false的时候就是让原来的文件名不改变)
-    filenameHashing: false,
+    filenameHashing: true,
 
     //   lintOnSave：{ type:Boolean default:true } 问你是否使用eslint
     lintOnSave: true,
@@ -35,5 +35,18 @@ module.exports = {
      * */
     productionSourceMap: false,
 
+    configureWebpack: {
+        plugins: [
+            new CompressionPlugin({
+                algorithm: 'gzip',
+                test: new RegExp('\\.(' + productionGzipExtensions.join('|') + ')$'),
+                threshold: 0,
+                minRatio: 1
+            }),
+            // new BabiliPlugin(),
+            // new BundleAnalyzerPlugin(),
+
+        ],
+    },
 
 };

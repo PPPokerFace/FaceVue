@@ -5,9 +5,10 @@
                 <a-card title="报道进度" style="height: 400px">
                     <ve-liquidfill :data="WaterPercentData" :settings="WaterPercentSettings"></ve-liquidfill>
                 </a-card>
-                <a-card title="报道情况" style="min-height: 500px"
+                <a-card title="报道进度排名" style="height: 500px"
                         :bodyStyle='{paddingLeft:"1px",paddingTop:"1px",paddingRight:"1px"}'>
-                    <welcome-data ref="mychild"></welcome-data>
+                    <ve-bar :data="ProgressOrderData" :settings="ProgressOrderSettings"
+                            :extend="ProgressOrderExtend"></ve-bar>
                 </a-card>
             </a-col>
             <a-col :span="14">
@@ -20,14 +21,14 @@
                 </a-card>
             </a-col>
             <a-col :span="5">
-                <a-card title="报道进度排名" style="height: 400px"
+                <a-card title="报道情况" style="min-height: 900px"
                         :bodyStyle='{paddingLeft:"1px",paddingTop:"1px",paddingRight:"1px"}'>
-                    <ve-bar :data="ProgressOrderData" :settings="ProgressOrderSettings"
-                            :extend="ProgressOrderExtend"></ve-bar>
+                    <welcome-data ref="mychild"></welcome-data>
                 </a-card>
-                <a-card title="其他功能" style="min-height: 500px">
 
-                </a-card>
+                <!--<a-card title="其他功能" style="min-height: 500px">-->
+
+                <!--</a-card>-->
             </a-col>
         </a-row>
     </div>
@@ -104,7 +105,7 @@
                 }
             }
             this.CollegeProcessSettings = {
-                dataOrder: {label: '报道率', order: 'desc'},
+                // dataOrder: {label: '报道率', order: 'desc'},
 
                 // stack: {'学生': ['学院人数', '报道人数']}
             }
@@ -158,7 +159,8 @@
                     rows: []
                 },
                 CollegeProcessData: {
-                    columns: ['学院', '学院人数', '报道人数', '报道率'],
+                    // columns: ['学院', '学院人数', '报道人数', '报道率'],
+                    columns: ['学院', '学院人数', '报道人数',],
                     rows: []
                 },
                 ProgressOrderData: {
@@ -171,10 +173,10 @@
             let that = this;
             api.welcomeDataExtend().then(response => {
                 let data = response.data;
-                this.WaterPercentData.rows[0].percent = data['water_percent_data']['percent']
-                this.MapData.rows = data['map_data']['rows']
-                this.ProgressOrderData.rows = data['process_order_data']['rows']
-                this.CollegeProcessData.rows = data['college_process_data']['rows']
+                // this.WaterPercentData.rows[0].percent = data['water_percent_data']['percent']
+                // this.MapData.rows = data['map_data']['rows']
+                // this.ProgressOrderData.rows = data['process_order_data']['rows']
+                // this.CollegeProcessData.rows = data['college_process_data']['rows']
             })
         },
         created() {
@@ -204,7 +206,7 @@
             webSocketOnMessage(e) { //数据接收
                 const data = JSON.parse(e.data);
                 console.log(11111111)
-                this.WaterPercentData.rows[0].pent = data['water_percent_data']['percent']
+                this.WaterPercentData.rows[0].percent = data['water_percent_data']['percent']
                 this.MapData.rows = data['map_data']['rows']
                 this.ProgressOrderData.rows = data['process_order_data']['rows']
                 this.CollegeProcessData.rows = data['college_process_data']['rows']

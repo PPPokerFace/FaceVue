@@ -7,7 +7,7 @@
              @change="handleTableChange"
     >
         <template slot="time" slot-scope="time">
-            {{time}}
+            {{time.substring(11,19)}}
         </template>
     </a-table>
 </template>

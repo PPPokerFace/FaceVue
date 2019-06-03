@@ -34,7 +34,7 @@ export default new Vuex.Store({
         logout(state) {
             state.status = '';
             state.token = '';
-            state.username='';
+            state.username = '';
             localStorage.setItem('status', '');
             localStorage.setItem('username', '');
         }

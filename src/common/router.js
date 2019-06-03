@@ -21,7 +21,7 @@ import gps from "../components/layout/gps"
 import adminInfo from "../components/layout/adminInfo"
 import monitor from "../components/monitor"
 import WelcomeDataShowPhone from "../components/layout/WelcomeDataShowPhone";
-
+import WebSocketWebCam from "../components/WebSocketWebCam"
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -106,6 +106,11 @@ const router = new VueRouter({
             path: '/monitor',
             name: 'monitor',
             component: monitor
+        },
+        {
+            path:'/webSocketWebCam',
+            name:'webSocketWebCam',
+            component:WebSocketWebCam
         }
 
     ]

@@ -41,7 +41,6 @@ export function letterbox(
     newCanvas.width=yoloSize[1];
     newCanvas.getContext("2d").drawImage(canvas, dw, dh, newSize[1], newSize[0]);
     return newCanvas
-
 }
 
 export function magicRectangle(context, x, y, width, height) {

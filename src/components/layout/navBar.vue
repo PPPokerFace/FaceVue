@@ -41,6 +41,7 @@
             <a-menu-item key="/objectDetection">模型性能估计</a-menu-item>
             <a-menu-item key="/gps">GPS定位</a-menu-item>
             <a-menu-item key="/monitor">【测试】监控</a-menu-item>
+            <a-menu-item key="/webSocketWebCam">推流</a-menu-item>
         </a-sub-menu>
 
     </a-menu>
@@ -75,7 +76,7 @@
                         this.$router.push('/welcomeData');
                         break;
                     case '/welcomeDataShow':
-                        if(document.body.clientWidth > document.body.clientHeight)
+                        if (document.body.clientWidth > document.body.clientHeight)
                             this.$router.push('/welcomeDataShow');
                         else
                             this.$router.push('/welcomeDataShowPhone')
@@ -104,6 +105,9 @@
                         break;
                     case '/monitor':
                         this.$router.push('/monitor');
+                        break;
+                    case '/webSocketWebCam':
+                        this.$router.push('/webSocketWebCam');
                         break;
                 }
 

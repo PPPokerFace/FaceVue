@@ -3,41 +3,41 @@
         <a-row>
             <a-col :span="16">
                 <a-card>
-                <a-form
-                        :form="form"
-                >
-                    <a-form-item
-                            label="监控地址"
-                            :help="tips"
+                    <a-form
+                            :form="form"
                     >
-                        <a-input
-                                v-decorator="[
+                        <a-form-item
+                                label="监控地址"
+                                :help="tips"
+                        >
+                            <a-input
+                                    v-decorator="[
                         'videoStreamAddress',
                         {rules: [{
                         required: true,
                         message: 'Please input the video stream address' }]}]"
-                                placeholder="video stream address"
-                        >
-                            <a-icon
-                                    slot="prefix"
-                                    type="user"
-                                    style="color:rgba(0,0,0,.25)"
-                            />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item>
-                        <a-button
-                                type="primary"
-                                @click="openVideoCaptrue"
-                        >
-                            打开监控
-                        </a-button>
-                    </a-form-item>
-                </a-form>
-                <div>
-                    <canvas ref="canvas" height="300" width="400"></canvas>
-                    <video ref="video"></video>
-                </div>
+                                    placeholder="video stream address"
+                            >
+                                <a-icon
+                                        slot="prefix"
+                                        type="user"
+                                        style="color:rgba(0,0,0,.25)"
+                                />
+                            </a-input>
+                        </a-form-item>
+                        <a-form-item>
+                            <a-button
+                                    type="primary"
+                                    @click="openVideoCaptrue"
+                            >
+                                打开监控
+                            </a-button>
+                        </a-form-item>
+                    </a-form>
+                    <div>
+                        <canvas ref="canvas" height="300" width="400"></canvas>
+                        <video ref="video"></video>
+                    </div>
                 </a-card>
             </a-col>
             <a-col :span="8">
@@ -91,20 +91,6 @@
         },
         methods: {
 
-            openVideoCaptrue111: function () {
-                if (FlvJs.isSupported()) {
-                    const flvPlayer = FlvJs.createPlayer({
-                        type: 'flv',
-                        url: 'https://127.0.0.1/b/media/'
-                    })
-                    flvPlayer.attachMediaElement(this.$refs["video"]);
-                    flvPlayer.load();
-                    flvPlayer.play();
-
-                }
-            },
-
-
             openVideoCaptrue: function () {
                 const id = this.form.getFieldValue("videoStreamAddress")
 
@@ -145,7 +131,6 @@
             },
             webSocketOnMessage(e) { //数据接收
                 const data = JSON.parse(e.data);
-                console.log(data)
                 const retVal = data["retVal"]         // number
                 const faceInfo = data["faceInfo"]     // Array
                 if (retVal == 1) {
@@ -156,13 +141,14 @@
                     img.onload = function () {
                         canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
                         faceInfo.forEach((face) => {
-                            faceInfoList.unshift(face)
-                            if(faceInfoList.length>5)
+                            console.log(face)
+                            if (100 - face["distance"] >= 70)
+                                faceInfoList.unshift(face)
+                            if (faceInfoList.length > 5)
                                 faceInfoList.pop()
                         })
                     };
                     img.src = dataurl;
-
                 }
             },
             webSocketOnSend(Data) {//数据发送

@@ -1,35 +1,35 @@
 <template>
     <div>
-    <a-card title="Camera">
-        <a-button type="primary" @click="get" slot="extra" :disabled="disabled">Run</a-button>
-        <div ref="yolo_div">
-            <div class="webcam-ui-container" style="text-align: center">
-                <a-spin tip="Loading..." :spinning="loading">
-                    <div ref="webcam-wrapper" id="webcam-wrapper"
-                         v-bind:style="{width:webcap_wrapper_width+'px' ,height:webcap_wrapper_height+'px'}">
-                        <!--
-                        <video ref="myvideo" width="288" height="288" playsinline autoplay muted ></video>
-                        -->
-                        <canvas ref="canvas" id="canvas" v-bind:width="canvas_width" v-bind:height="canvas_height"
-                                style="margin: auto;"></canvas>
-                    </div>
-                </a-spin>
-                <!--<div>{{ matchRes }} {{matchScore}}</div>-->
+        <a-card title="Camera">
+            <a-select style="width: 240px" @change="selectChange">
+                <a-select-option v-for="video in devicesInfos" :key="video.deviceId">{{video.label}}</a-select-option>
+            </a-select>
 
-                <a-progress :percent="matchScore*100" :showInfo="false"/>
-                <div style="text-align: left">
-                    <a-tag>{{ matchRes }}</a-tag>
+            <a-button type="primary" @click="get" :disabled="disabled">Run</a-button>
+            <div ref="yolo_div">
+                <div class="webcam-ui-container" style="text-align: center">
+                    <a-spin tip="Loading..." :spinning="loading">
+                        <div ref="webcam-wrapper" id="webcam-wrapper"
+                             v-bind:style="{width:webcap_wrapper_width+'px' ,height:webcap_wrapper_height+'px'}">
+                            <canvas ref="canvas" id="canvas" v-bind:width="canvas_width" v-bind:height="canvas_height"
+                                    style="margin: auto;"></canvas>
+                        </div>
+                    </a-spin>
+                    <!--<div>{{ matchRes }} {{matchScore}}</div>-->
+
+                    <a-progress :percent="matchScore*100" :showInfo="false"/>
+                    <div style="text-align: left">
+                        <a-tag>{{ matchRes }}</a-tag>
+                    </div>
                 </div>
             </div>
-        </div>
-    </a-card>
+        </a-card>
     </div>
 </template>
 
 <script>
     import * as tf from "@tensorflow/tfjs"
-    import {v3_tiny_model_url,yolo,magicRectangle,} from "./yoloApi"
-    import {getLocation,calcDistanceWithJSUT} from '../common/gpsApi'
+    import {v3_tiny_model_url, yolo, magicRectangle,} from "./yoloApi"
     import api from '@/common/api'
 
 
@@ -37,10 +37,13 @@
     const YOLO_WIDTH = 480;
 
     export default {
-        name: "YoloWebCam",
+        name: "WebSocketWebCam",
 
         data() {
             return {
+                socket: null,
+                devicesInfos: new Array(),
+                deviceId: -1,
                 canvas_width: 10,
                 canvas_height: 10,
                 webcap_wrapper_width: 100,
@@ -54,63 +57,44 @@
                 stream: 0,
                 new_stu_name: '',
                 old_stu_name: '',
-                distance:0
+                distance: 0
             }
         },
-        watch: {
-            new_stu_name() {
-                if (this.new_stu_name != this.old_stu_name) {
-                    if(localStorage.getItem("yearcheckinevent")!=undefined){
-                        this.old_stu_name = this.new_stu_name;
-                        this.openNotificationSuccess(this.new_stu_name);
-                    }else {
-                        this.openNotificationError();
-                    }
+
+        mounted() {
+            Webcam.getCameraList().then(resolve => {
+                    this.devicesInfos = resolve;
                 }
-            }
+            )
+
         },
-        mounted()
-        {
-            const location=getLocation()
-            if(location[0]==true)
-            {
-                this.distance=calcDistanceWithJSUT(location[1],location[2]);
-            }
+
+        created() {
+            this.initWebSocket();
         },
+
+        destroyed() {
+            this.socket.close() //离开路由之后断开websocket连接
+        },
+
 
         beforeDestroy() {
             const stream = typeof this.stream.stop === 'function' ? this.stream : this.stream.getTracks()[0]
             stream.stop();
-            this.cam_destory=true;
+            this.cam_destory = true;
         },
 
         methods: {
-            openNotificationSuccess(info) {
-                console.log(info)// eslint-disable-line
-                this.$notification.open({
-                    message: '签到成功',
-                    description: info,
-                    icon: <a-icon type = 'smile' style = 'color: #108ee9' / >
-            });
-            },
-            openNotificationError(info) {
-                console.log(info)// eslint-disable-line
-                this.$notification.open({
-                    message: '签到未开始',
-                    description: info,
-                    icon: <a-icon type = 'stop' style = 'color: #108ee9' / >
-            });
+            selectChange(value) {
+                this.deviceId = value;
             },
 
             async get(e) {          // eslint-disable-line
-                this.disabled = true;
-                this.loading = true;
                 const mVideo = document.createElement('video');
                 mVideo.setAttribute('muted', true);
                 mVideo.setAttribute('autoplay', true);
                 mVideo.setAttribute('playsinline', true);
 
-//                const webCam = new Webcam(this.$refs['myvideo']);
                 const webCam = new Webcam(mVideo);
                 const canvas = this.$refs['canvas'];
 
@@ -118,13 +102,15 @@
             },
 
             // eslint-disable-next-line
-            runCam: async function (Camera, Canvas) {
-
+            async runCam(Camera, Canvas) {
                 const modelUrl = v3_tiny_model_url;
                 const model = await tf.loadLayersModel(modelUrl);       // eslint-disable-line no-unused-vars
+                if (await Camera.OpenCamera(this.deviceId) === undefined)
+                    return;
 
-                await Camera.setup();
-                this.cam_destory=false;
+                this.loading = true;
+//                this.disabled = true;
+                this.cam_destory = false;
 
                 this.stream = Camera.getStream()
 
@@ -160,11 +146,7 @@
                 }
                 const tempCanvasContext = tempCanvas.getContext('2d');
 
-//                CanvasContext.globalCompositeOperation = 'source-atop';//重叠部分可见，其他透明。
-                var frameNum = 0;
-//                console.log("Video Size:", video.videoWidth,video.videoHeight);     // eslint-disable-line
-//                console.log("Canvas Size:", drawImage_Width, drawImage_Height);
-
+                let frameNum = 0;
                 let emptyframe = true;
 
                 while (!this.cam_destory) // eslint-disable-line
@@ -193,12 +175,12 @@
 
                     const startTime = performance.now();            // eslint-disable-line
 
-                    const boxes=await yolo(model,tempCanvas,imageSize)
-
+                    const boxes = await yolo(model, tempCanvas, imageSize)
+                    //
                     CanvasContext.clearRect(0, 0, this.canvas_width, this.canvas_height);
                     CanvasContext.drawImage(tempCanvas, drawImage_X, drawImage_Y, drawImage_Width, drawImage_Height);
+                    const bboxs=new Array();
 
-                    let bboxs=new Array();
                     boxes.forEach(box => {
                         const {
                             top, left, bottom, right, height, width, score, className   // eslint-disable-line no-unused-vars
@@ -207,60 +189,31 @@
                         // Calcaute the offset of left and top
                         const _left = left + drawImage_X;
                         const _top = top + drawImage_Y;
-                        const bbox={"xmin":_left,
-                            "ymin":_top,
-                            "xmax":_left+width,
-                            "ymax":_top+height,
-                            "score":score};
+                        const bbox = {
+                            "xmin": _left,
+                            "ymin": _top,
+                            "xmax": _left + width,
+                            "ymax": _top + height,
+                            "score": score
+                        };
                         bboxs.push(bbox)
                         magicRectangle(CanvasContext, _left, _top, width, height)
 
                     });
 
-                    if (frameNum % 10 == 0 && boxes.length!==0) {
-                        //https://blog.csdn.net/csdn_yudong/article/details/79668655
-                        //for this code
+                    if (frameNum % 40 == 0 && bboxs.length !== 0) {
 
-                        const loginName=localStorage.getItem("username");
-
-                        let that = this;
-
-                        api.sendImage(Canvas, bboxs, true).then((response) => {
-                            const matchRes = response.data.face[0].match;
-                            const matchScore = response.data.face[0].similarity;
-                            if (matchScore >= 0.66) {
-                                // 匹配到的不是本人...
-                                if(matchRes!==loginName)
-                                    return ;
-
-
-                                // 距离很远
-                                // if(that.distance>=2000)
-                                //     return ;
-
-
-                                that.matchRes = matchRes;
-                                that.matchScore = matchScore;
-
-                                api.getStudent(matchRes).then((response) => {
-                                    console.log(response);// eslint-disable-line
-                                    const stu_number = response.data.results[0]["stu_number"];
-                                    this.new_stu_name = response.data.results[0]["name"];
-                                    if (stu_number !== undefined) {
-                                        api.addWelcomeData(stu_number);
-                                    }
-
-                                });
-                            } else {
-                                that.matchRes = "未识别";
-                                that.matchScore = "";
-                            }
-                        });
+                        let data = {
+                            "image": Canvas.toDataURL('image/jpeg'),
+                            "face": bboxs,
+                            "detected": true,
+                        };
+                        this.webSocketOnSend(JSON.stringify(data));
                     }
 
                     const endTime = performance.now();// eslint-disable-line
-
-                    //do something log ...
+                    //
+                    // //do something log ...
                     if (frameNum % 200 === 0) {
                         console.log("inference: " + (endTime - startTime) + " milliseconds."); // eslint-disable-line
                         console.log('tf.memory(): ', tf.memory()); // eslint-disable-line
@@ -270,8 +223,40 @@
                 }
             },
 
-        }
+            initWebSocket() { //初始化weosocket
+                const wsuri = api.getWsFaceRecognition()
+                this.socket = new WebSocket(wsuri);
+                this.socket.onmessage = this.webSocketOnMessage;
+            },
 
+            webSocketOnMessage(e) { //数据接收
+                const data = JSON.parse(e.data);
+                const matchRes = data["face"][0].match;
+                const matchScore = data["face"][0].similarity;
+                let that=this;
+                if (matchScore >= 0.66) {
+
+                    that.matchRes = matchRes;
+                    that.matchScore = matchScore;
+
+                    api.getStudent(matchRes).then((response) => {
+                        console.log(response);// eslint-disable-line
+                        const stu_number = response.data.results[0]["stu_number"];
+                        this.new_stu_name = response.data.results[0]["name"];
+                        if (stu_number !== undefined) {
+                            api.addWelcomeData(stu_number);
+                        }
+                    });
+                } else {
+                    that.matchRes = "未识别";
+                    that.matchScore = "";
+                }
+            },
+
+            webSocketOnSend(Data) {//数据发送
+                this.socket.send(Data);
+            },
+        }
     };
 
     /**
@@ -294,6 +279,51 @@
          */
         constructor(webcamElement) {
             this.webcamElement = webcamElement;
+            this.cameraHeight = 352;
+            this.cameraWdith = 480;
+        }
+
+        static getCameraList() {
+            return new Promise(resolve => {
+                    navigator.mediaDevices.enumerateDevices()
+                        .then(deviceInfos => {
+                            var device = new Array();
+                            for (var i = 0; i !== deviceInfos.length; ++i) {
+                                var deviceInfo = deviceInfos[i];
+                                if (deviceInfo.kind === 'videoinput') {
+                                    device.push(deviceInfo)
+                                }
+                            }
+                            resolve(device);
+                        })
+                }
+            );
+        }
+
+        async OpenCamera(deviceId) {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                this.stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        deviceId: {exact: deviceId}
+                    },
+                    audio: false
+                });
+                window.stream = this.stream;
+                this.webcamElement.srcObject = this.stream;
+                return new Promise(resolve => {
+                    this.webcamElement.onloadedmetadata = () => {
+                        if (this.webcamElement.videoHeight > this.webcamElement.videoWidth) {
+                            this.adjustVideoSize(
+                                this.cameraHeight, this.cameraWdith);
+                        } else {
+                            this.adjustVideoSize(
+                                this.cameraWdith, this.cameraHeight);
+                        }
+                        resolve(true);
+                    };
+                });
+
+            }
         }
 
         /**
@@ -303,51 +333,14 @@
          * @param {number} height The real height of the video element.
          */
         adjustVideoSize(width, height) {  // eslint-disable-line
-
             this.webcamElement.width = width;
             this.webcamElement.height = height;
-            /*
-            const aspectRatio = width / height;
-            if (width >= height) {
-                this.webcamElement.width = aspectRatio * this.webcamElement.height;
-            } else if (width < height) {
-                this.webcamElement.height = this.webcamElement.width / aspectRatio;
-            }
-            */
-            console.log("YOLO Size:", this.webcamElement.width, this.webcamElement.height)               // eslint-disable-line
-        }
-
-        async setup() {
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                this.stream = await navigator.mediaDevices.getUserMedia({
-                    'audio': false,
-                    'video': {facingMode: 'user'}
-                });
-                //window.stream = stream;
-                this.webcamElement.srcObject = this.stream;
-                return new Promise(resolve => {
-                    this.webcamElement.onloadedmetadata = () => {
-                        if (this.webcamElement.videoHeight > this.webcamElement.videoWidth) {
-                            this.adjustVideoSize(
-                                YOLO_HEIGHT, YOLO_WIDTH);
-                        } else {
-                            this.adjustVideoSize(
-                                YOLO_WIDTH, YOLO_HEIGHT);
-                        }
-                        resolve();
-                    };
-                });
-            } else {
-                alert("No webcam found!");
-                throw new Error('No webcam found!');
-            }
         }
 
         getStream() {
             return this.stream;
         }
     }
-
 
 </script>
 

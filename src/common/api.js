@@ -1,10 +1,10 @@
 import Vue from 'vue'
 
-//const api_HOST = "https://192.168.1.102/b";
+const api_HOST = "https://192.168.1.102/b";
 //const api_HOST = "https://192.168.43.37/b";
-const api_HOST = "https://127.0.0.1/b";
-//const ws_HOST = "wss://192.168.1.102/b";          // WebSocket
-const ws_HOST = "wss://127.0.0.1/b";          // WebSocket
+//const api_HOST = "https://127.0.0.1/b";
+const ws_HOST = "wss://192.168.1.102/b";          // WebSocket
+//const ws_HOST = "wss://127.0.0.1/b";          // WebSocket
 //const ws_HOST = "wss://192.168.43.37/b";          // WebSocket
 const api_SEND_IMAGE = api_HOST + "/face-recognition/";
 
@@ -22,7 +22,9 @@ const api_IS_IMAGE_UPLOAD_THIS_YEAR = api_HOST + '/is-image-upload-this-year/';
 const api_COMMENT = api_HOST + '/comment/';
 
 const ws_MONITOR = ws_HOST + "/ws/monitor/";
-const ws_WELCOME_DATA = ws_HOST + "/ws/welcome-data/"
+const ws_WELCOME_DATA = ws_HOST + "/ws/welcome-data/";
+const ws_STREAM = ws_HOST + '/ws/stream/';
+const ws_FACE_RECOGNITION = ws_HOST+'/ws/face-recognition/';
 
 export default {
     getHttpApi: function () {
@@ -35,9 +37,16 @@ export default {
     getWsWelcomeData: function () {
         return ws_WELCOME_DATA;
     },
+
+    getWsFaceRecognition:function() {
+        return ws_FACE_RECOGNITION;
+
+    },
+
     sendImage: function (canvas, bbox = [], detected = false,
                          recognize = true, name = null, saveVec = false, savePic = false) {
         let data = {
+//            "image": canvas.toBlob(),
             "image": canvas.toDataURL('image/jpeg'),
             "detected": detected,
         };
@@ -122,6 +131,8 @@ export default {
             param.append("ordering", '-time');
         else if (order == 'ascennd')
             param.append("ordering", 'time');
+        else
+            param.append("ordering", '-time');
         if (page != undefined)
             param.append("p", page);
         param.append('checked', true);

@@ -85,47 +85,52 @@
 
             },
             beforeUp(file, fileList) {
-                return new Promise((resolve, reject) => {
-                    //正则表达式，匹配zip结尾文件，i表示不区分大小写
-                    const zipPart=/^.*\.(zip)$/i
-                    if(zipPart.test(file.name)) {
-                        resolve(file)
-                        return;
-                    }
+                //正则表达式，匹配zip结尾文件，i表示不区分大小写
+                const zipPart = /^.*\.(zip)$/i;
+                if (zipPart.test(file.name)) {
+                    return true;
+                } else {
+                    const hide = this.$message.loading('识别人脸中', 0);
+                    return new Promise((resolve, reject) => {
 
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    const canvas = document.createElement("canvas");
-                    const that = this;
-                    reader.onload = (e) => {
-                        const img = new Image();
-                        const dataurl = e.target.result;
-                        img.onload = async (e) => {
-                            canvas.width = e.target.width;
-                            canvas.height = e.target.height;
-                            canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                            //对原图进行三次旋转
-                            let canvasTemp = canvas;
-                            for (let i = 0; i < 3; i++) {
-                                const canvasLetter = letterbox(canvasTemp, [352, 480])
-                                const boxes =  await yolo(this.model, canvasLetter, [canvasTemp.height, canvasTemp.width])
-                                if (boxes.length !== 0) {
-                                    const newFile = that.dataURLtoFile(canvasTemp.toDataURL(), file.name)
-                                    //文件伪造，这一句不能少
-                                    newFile.uid = file.uid;
-                                    resolve(newFile);
-                                    break;
-                                } else {
-                                    canvasTemp = this.rotate90(canvasTemp);
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        const canvas = document.createElement("canvas");
+                        const that = this;
+                        reader.onload = (e) => {
+                            const img = new Image();
+                            const dataurl = e.target.result;
+                            img.onload = async (e) => {
+                                canvas.width = e.target.width;
+                                canvas.height = e.target.height;
+                                canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                                //对原图进行三次旋转
+                                let canvasTemp = canvas;
+                                for (let i = 0; i < 3; i++) {
+                                    const canvasLetter = letterbox(canvasTemp, [352, 480])
+                                    const boxes = await yolo(this.model, canvasLetter, [canvasTemp.height, canvasTemp.width])
+                                    if (boxes.length !== 0) {
+                                        const newFile = that.dataURLtoFile(canvasTemp.toDataURL(), file.name)
+                                        //文件伪造，这一句不能少
+                                        newFile.uid = file.uid;
+                                        setTimeout(hide, 0);
+                                        resolve(newFile);
+                                        return;
+                                    } else {
+                                        canvasTemp = this.rotate90(canvasTemp);
+                                    }
                                 }
-                            }
-                            //所有旋转尝试之后还不能得到人脸则放弃上传
-                            reject();
+                                //所有旋转尝试之后还不能得到人脸则放弃上传
+                                setTimeout(hide, 0);
+                                this.$message.info("没有识别到人脸！");
+                                reject();
+                            };
+                            img.src = dataurl;
                         };
-                        img.src = dataurl;
-                    };
-                })
+                    })
+                }
             },
         }
     }

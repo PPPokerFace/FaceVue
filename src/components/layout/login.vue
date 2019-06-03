@@ -91,7 +91,7 @@
                 let username = this.loginForm.username;
                 let password = this.loginForm.password;
                 this.$store.dispatch('login', {username, password})
-                    .then(() => {
+                    .then((res) => {
                         api.getYearCheckInEvent().then(response => {
                             localStorage.setItem("yearcheckinevent", response.data.results[0]["id"].toString());
                         });
@@ -100,8 +100,12 @@
                             localStorage.setItem("stu_number", stu_info["stu_number"])
                         });
                         this.$router.push('/publicInfo')
+
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => {
+                        console.log(err)
+                        this.$message.info('用户名或密码错误！');
+                    });
                 console.log('111')
             },
             handleRegister(e) {

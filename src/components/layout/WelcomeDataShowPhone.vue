@@ -57,7 +57,7 @@
                     formatter: function (params) {
                         if (params.value >= 0) {
                             let strr = params.name + ':' + params.value
-                            console.log(strr)
+                            //console.log(strr)
                             return strr
                         } else {
                             return ''

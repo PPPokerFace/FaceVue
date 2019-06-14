@@ -62,7 +62,9 @@
             }
         },
         mounted() {
-            if (document.body.clientWidth < document.body.clientHeight || this.$route.path == '/welcomeDataShow') {
+            if (document.body.clientWidth < document.body.clientHeight
+                || this.$route.path == '/welcomeDataShow'
+                || this.$route.path == '/monitor') {
                 this.visible = false;
             } else {
                 this.visible = true;

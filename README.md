@@ -1,15 +1,31 @@
-# FaceFinal前端系统
+# FaceFinal Frontend
 
 ## Introduction
-FaceFinal前端系统
+FaceFinal系统的前端系统，由Vue框架编写。
 
-### Other
-tfjs模型中将group文件重命名为json后缀用于解决网页压缩中（可能的）对于二进制文件传输错误的问题。
+本作品为毕业设计作品开源，核心功能模块不再维护更新。
 
-需要修改原文件名和model.json中的对应文件名。
+除去本项目外，本系统还包括[后端](https://github.com/PPPokerFace/FaceFinal)配置和[反向代理](https://github.com/PPPokerFace/FaceCaddy)配置项。
 
-如有其他解决方法还请告知
-## Update
+## Install 
+
+1. 安装依赖
+- `npm install`
+
+2. 运行
+- `npm run serve`
+- use the address: http://localhost:8080/
+
+3. 部署
+- `npm run build`
+- `serve`
+- use the address: http://localhost:5000/
+
+## Recent Update
+#### 2019.6.14
+- 修复一些细微的bug
+- 最终版本上传
+
 #### 2019.6.4
 - 毕业答辩版本上传
 - 修复了一些小bug
@@ -37,3 +53,7 @@ tfjs模型中将group文件重命名为json后缀用于解决网页压缩中（�
 #### 2019.4.13 
 - 中期答辩版本上传
 
+## Author
+[zhaoyonghang](https://github.com/zhaoyonghang)
+
+[ty](https://github.com/tyIceStream)

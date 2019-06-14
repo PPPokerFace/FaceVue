@@ -205,7 +205,6 @@
             },
             webSocketOnMessage(e) { //数据接收
                 const data = JSON.parse(e.data);
-                console.log(11111111)
                 this.WaterPercentData.rows[0].percent = data['water_percent_data']['percent']
                 this.MapData.rows = data['map_data']['rows']
                 this.ProgressOrderData.rows = data['process_order_data']['rows']

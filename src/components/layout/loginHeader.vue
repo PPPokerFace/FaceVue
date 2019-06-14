@@ -36,12 +36,16 @@
             nvaLeft,
         },
         mounted() {
-            if (document.body.clientWidth < document.body.clientHeight||this.$route.path=='/welcomeDataShow') {
+            if (document.body.clientWidth < document.body.clientHeight
+                || this.$route.path =='/welcomeDataShow'
+                || this.$route.path =='/monitor') {
+
                 this.visiable = true;
             }
             else {
                 this.visiable = false;
             }
+            console.log(this.$route.path)
         },
 
         methods: {

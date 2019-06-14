@@ -36,7 +36,7 @@
                 <a-menu-item key="/myPostCard">我的帖子</a-menu-item>
             </a-sub-menu>
         </a-sub-menu>
-        <a-sub-menu key="sub3" @titleClick="titleClick">
+        <a-sub-menu ref="testArea" key="sub3" @titleClick="testAreaClick">
             <span slot="title"><a-icon type="appstore"/><span>测试功能区</span></span>
             <a-menu-item key="/objectDetection">模型性能估计</a-menu-item>
             <a-menu-item key="/gps">GPS定位</a-menu-item>
@@ -61,6 +61,17 @@
             }
         },
         methods: {
+            mounted() {
+                const loginName = localStorage.getItem("username");
+                if (loginName === "admin") {
+                    this.$refs["testArea"].$el.style["display"] = "";
+                }
+                else
+                {
+                    this.$refs["testArea"].$el.style["display"] = "none";
+                }
+
+            },
             handleClick(e) {
                 switch (e.key) {
                     case '/uploadImg':
@@ -80,7 +91,6 @@
                             this.$router.push('/welcomeDataShow');
                         else
                             this.$router.push('/welcomeDataShowPhone')
-
                         break;
                     case '/myInformation':
                         this.$router.push('/myInformation');
@@ -112,16 +122,19 @@
                 }
 
             },
-            titleClick(e) {
-                console.log('titleClick', e)
+            titleClick() {
+            },
+            testAreaClick(e) {
+                const loginName = localStorage.getItem("username");
+                if (loginName !== "admin") {
+                    this.$refs["testArea"].$el.style["display"] = "none"
+                }
             }
-            ,
         },
         watch: {
             openKeys(val) {
-                console.log('openKeys', val)
-            }
-            ,
+
+            },
         }
         ,
     }

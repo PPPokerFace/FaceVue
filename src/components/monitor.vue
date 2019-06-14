@@ -4,7 +4,9 @@
             <a-col :span="16">
                 <a-card>
                     <a-form
+                            ref="monitorForm"
                             :form="form"
+                            layout="inline"
                     >
                         <a-form-item
                                 label="监控地址"
@@ -35,7 +37,7 @@
                         </a-form-item>
                     </a-form>
                     <div>
-                        <canvas ref="canvas" height="300" width="400"></canvas>
+                        <canvas ref="canvas" height="600" width="800" max-width="100%"></canvas>
                         <video ref="video"></video>
                     </div>
                 </a-card>
@@ -49,11 +51,15 @@
                         <a-list-item slot="renderItem" slot-scope="item, index">
                             <a-card hoverable>
                                 <a-card-meta
-                                        title="test">
+                                        :title="item.label">
                                     <template slot="description">
-                                        <div>姓名：{{item.label}}</div>
                                         <div>置信度：{{100-item.distance}}</div>
+                                        <div>{{new Date()}}}</div>
                                     </template>
+                                    <a-avatar
+                                            style="width:90px;height:120px"
+                                            slot="avatar"
+                                            :src="item.img"/>
                                 </a-card-meta>
                             </a-card>
                         </a-list-item>
@@ -77,7 +83,8 @@
                 id: '',
                 socket: null,
                 tips: undefined,
-                faceInfo: []
+                faceInfo: [],
+                faceNameSet: new Set(),
             }
         },
         beforeCreate() {
@@ -99,6 +106,7 @@
                     "id": id
                 };
                 this.webSocketOnSend(JSON.stringify(data));
+                this.$refs["monitorForm"].$el.style["display"]="none"
             },
 
             validatePrimeNumber: function (number) {
@@ -138,14 +146,30 @@
                     const img = new Image();
                     let canvas = this.$refs["canvas"];
                     const faceInfoList = this.faceInfo
+                    const faceNameSet = this.faceNameSet
                     img.onload = function () {
                         canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
                         faceInfo.forEach((face) => {
                             console.log(face)
-                            if (100 - face["distance"] >= 70)
+                            if (100 - face["distance"] >= 70 && !faceNameSet.has(face.label)) {
+                                const avatar = document.createElement("canvas");
+                                const ctx = avatar.getContext("2d").drawImage(img,
+                                    face["xmin"],
+                                    face["ymin"],
+                                    face["xmax"] - face["xmin"],
+                                    face["ymax"] - face["ymin"],
+                                    0,
+                                    0,
+                                    240,
+                                    150);
+                                face["img"] = avatar.toDataURL("image/jpeg");
+                                faceNameSet.add(face.label);
                                 faceInfoList.unshift(face)
-                            if (faceInfoList.length > 5)
-                                faceInfoList.pop()
+                            }
+                            if (faceInfoList.length > 5) {
+                                const facePop = faceInfoList.pop();
+                                faceNameSet.delete(facePop.label);
+                            }
                         })
                     };
                     img.src = dataurl;

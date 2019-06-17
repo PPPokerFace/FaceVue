@@ -21,6 +21,10 @@ FaceFinal系统的前端系统，由Vue框架编写。
 - `serve`
 - use the address: http://localhost:5000/
 
+## Model
+
+本项目内置了一个基于tfjs的用于人脸检测的神经网络模型。模型具体参数详细见此处。
+
 ## Recent Update
 #### 2019.6.14
 - 修复一些细微的bug

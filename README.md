@@ -23,7 +23,7 @@ FaceFinal系统的前端系统，由Vue框架编写。
 
 ## Model
 
-本项目内置了一个基于tfjs的用于人脸检测的神经网络模型。模型具体参数详细见此处。
+本项目内置了一个基于tfjs的用于人脸检测的神经网络模型。模型具体参数详细见[此处](https://github.com/PPPokerFace/FaceSystem/tree/master/tfjsModel)。
 
 本模型用于在浏览器环境下的人脸检测任务，尤其指近距离场景下的人脸检测。
 
